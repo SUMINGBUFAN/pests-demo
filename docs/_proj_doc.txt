@@ -1,0 +1,116 @@
+四级项目1：农作物病虫害识别与分类
+大连东软信息学院
+实验标准框架（实验指导书）
+1. 基本信息
+实验名称：农作物病虫害模型识别与应用
+实验学时：课内2学时（模型设计思路串讲、随堂实践）
+实验类别：
+£验证性 £基本应用性 £综合性 £设计性 ■创新研究性
+课程名称：深度学习
+课程编号：52001CC0JZ
+授课对象：■本科 £高职 £专升本 £中职升本
+2. 实验目的（预期学习效果）
+3. 实验任务及原理
+实验任务
+实验原理
+卷积神经网络构成
+图 1：卷积神经网络
+输入层：整个网络的输入，一般代表了一张图片的像素矩阵。图 1中最左侧三维矩阵代表一张输入的图片，三维矩阵的长、宽代表了图像的大小，而三维矩阵的深度代表了图像的色彩通道（channel）。黑白图片的深度为 1，RGB 色彩模式下，图片的深度为 3。
+卷积层：CNN 中最为重要的部分。与全连接层不同，卷积层中每一个节点的输入只是上一层神经网络中的一小块，这个小块常用的大小有 3×3 或者 5×5。一般来说，通过卷积层处理过的节点矩阵会变的更深。
+池化层（Pooling）：池化层不改变三维矩阵的深度，但是可以缩小矩阵的大小。池化操作可以认为是将一张分辨率高的图片转化为分辨率较低的图片。通过池化层，可以进一步缩小最后全连接层中节点的个数，从而到达减少整个神经网络参数的目的。池化层本身没有可以训练的参数。
+全连接层，最后一层激活函数使用softmax。
+经过多轮卷积层和池化层的处理后，在CNN的最后一般由1到2个全连接层来给出最后的分类结果。经过几轮卷积和池化操作，图像中的信息已经被抽象成了信息含量更高的特征。可以将卷积和池化看成自动图像提取的过程，在特征提取完成后，仍然需要使用全连接层来完成分类任务。
+对于多分类问题，最后一层激活函数可以选择 softmax，这样可以得到样本属于各个类别的概率分布情况。
+卷积层
+卷积神经网络结构中最重要的部分，过滤器（filter），如图 2中黄色和橙色的 3×3×3 矩阵所示。
+filter可以将当前层神经网络上的一个子节点矩阵转化为下一层神经网络上的一个单位节点矩阵。
+图 2：卷积操作
+卷积操作需要注意 filter 的个数、尺寸、卷积步长 stride 的大小以及 padding 的大小。
+常用的 filter 尺寸有 3×3 或 5×5，即图 2 黄色和橙色矩阵中的前两维；filter 的节点矩阵深度，即图 2 黄色和橙色矩阵中的最后一维，是由当前层神经网络节点矩阵的深度（RGB 图像节点矩阵深度为 3）决定的；卷积层输出矩阵的深度是由该卷积层中 filter 的个数决定，该参数一般随着卷积操作的进行越来越大。
+图 2中 filter 的尺寸为 3×3×3，filter 的深度为 2。
+卷积操作中，一个 3×3×3 的子节点矩阵和一个 3×3×3 的 filter 对应元素相乘，得到的是一个3×3×3 的矩阵，此时将该矩阵所有元素求和，得到一个 1×1×1 的矩阵，将其再加上 filter 的 bias，经过激活函数得到最后的结果，将最后的结果填入到对应的输出矩阵中。
+图  3：卷积操作流程
+卷积层结构的前向传播过程是通过将一个 filter 从神经网络当前层的左上角移动到右下角，并且在移动中计算每一个对应的单位矩阵得到的。
+padding是在图像周围进行填充，常用 zero padding，即用0来填充。
+卷积步长stride是在图3中filter一次移动的步子，图3中stride的大小是2。
+卷积步长只对输入矩阵的长和宽有效。
+卷积层输出矩阵的大小与输入图片大小的尺寸、padding 的大小、卷积步长都有关。
+池化层
+池化层可以有效地缩小矩阵的尺寸，从而减少最后全连接层中的参数。使用池化层可以加快计算速度，也有防止过拟合问题的作用。
+与卷积层类似，池化层的前向传播过程也是通过一个类似 filter 的结构完成的。不过池化层 filter 中的计算不是节点的加权和，而是采用更加简单的最大值或者平均值运算。使用最大值操作的池化层被称为最大池化层。使用平均值操作的池化层被称为平均池化层。
+与卷积层的filter类似，池化层的filter也需要人工设定filter的尺寸、是否使用全0填充以及filter移动的步长等设置，含义与上文相同。
+卷积层和池化层中 filter 的移动方式是相似的，唯一的区别在于卷积层使用的 filter 是横跨整个深度的，而池化层使用的 filter 只影响一个深度上的节点。所以池化层的过滤器除了在长和宽两个维度移动之外，还需要在深度维度上移动。在进行 max 或者 average 操作时，只会在同一个矩阵深度上进行，而不会跨矩阵深度进行。
+图 4：max pooling
+池化层一般不改变矩阵的深度，只改变矩阵的长和宽。池化层只有一些需要人工设定的超参数。
+卷积神经网络的特点
+局部连接：卷积层输出矩阵上的某个位置只与部分输入矩阵有关，而不是全部的输入矩阵。卷积层输出的某个特征可能只和输入图片的某一部分相关，和其它位置的信息没有任何关联，局部连接可以让特征只关注其应该关注的部分。同时也减少了神经网络的参数。
+参数共享：同一卷积层中 filter 的参数是共享的，一个 filter 无论在哪个位置进行卷积操作，filter 矩阵中的值都是一样的。共享 filter 的参数可以使得图像中的内容不受位置的影响。共享卷积层 filter 的参数还可以巨幅减少神经网络上的参数。
+卷积层的参数要远远小于同等情况下的全连接层。卷积层参数的个数和输入图片的大小无关，这使得卷积神经网络可以很好地扩展到更大的图像数据上。
+4. 实验环境
+软件开发环境：
+1.Windows10
+2.Python3.7及以上
+3.pip 或pip3
+4.Pytorch框架
+5.Matplotlib、Numpy等第三方包
+5. 实验预习任务
+阅读课件《卷积神经网络》
+6. 实验过程（实验方案）
+基础实验步骤：
+1.数据准备
+新建一个文件夹用于存放本项目的所有代码和数据，在本项目中，使用“病虫害的图像数据”，该数据集目录内含train、test、validation等目录，其中train、val中包括至少3个类别（由收集的数据决定），目录结构如下图5-图7所示。
+图5 datasets目录
+图6 train下目录
+图7  数据集信息
+数据下载：
+[Pests_dataset.zip]
+2. 训练代码实现
+1）数据准备
+新建train.py文件，将数据路径改为自己数据的实际路径，代码如下：
+2）模型设计
+在基础实验中需要采用2种模型进行训练（分别训练）
+自行编写forward函数
+3）模型训练与验证
+4）模型测试
+新建测试代码test.py，导入模型，更改标签名字，输入图像进行测试。
+5）可视化结果
+测试结果：
+创新实验步骤：
+7. 实验课后任务
+8. 实验考核
+9. 实验资源
+课件：涉及本实验中模型设计全部的开发内容和知识点
+测试题目:同课件，涉及项目全部的开发内容和知识点
+项目相关的文档资料：项目各阶段需求文档、项目分解任务书、项目报告模板、《深度学习》相关电子书、相关技术及框架的官方文档
+FAQ
+10.实验报告模版
+[实验报告模板.doc]
+=== TABLES: 13
+--- Table 0 (3x3)
+项目内容 | 预期学习效果 | KT点
+利用卷积神经网络实现图像分类 | 理解神经网络的结构和工作流程，能够设计和搭建网络模型，能够以解决实际问题为导向实现深度学习模型的训练和优化，树立学生正确严谨的科学态度。 培养学生的创新思维和能力。 | 1_深度学习简介及框架 / 2_张量 / 3_计算图 / 4_神经网络
+利用卷积神经网络实现图像分类 | 能够理解和掌握深度学习领域的流行算法结构和原理，能够及时发现模型训练过程中的问题，并且根据问题和实际应用需求能够设计出优化模型性能的具体方法，培养学生发现问题和解决问题的能力。 | 5_梯度下降 / 6_反向传播 / 7_损失函数 / 8_模型优化与正则化 / 9_卷积层 / 10_池化层 / 11_模型搭建
+--- Table 1 (1x1)
+给定收集农作物病虫害检测的分类数据集，基于数据的特点，设计卷积神经网络模型，实现对农作物病虫害的分类任务。 / 自行设计多层卷积神经网络和调用经典的CNN模型进行分类实验 / 通过优化方法，提升网络学习效果 / 撰写实验报告，保存训练好的模型。
+--- Table 2 (1x1)
+基础实验： / 根据收集的数据集，自行设计网络结构进行分类实验，并成功进行训练和测试 / 调取经典的CNN模型（如resnet/vgg/MobileNet等模型），进行训练和测试。 / 创新实验： / 采取至少两种优化的方式提高模型的精度（下面两种）。 / 可以改变网络模型或者参数，提高模型的精度。 / 进行数据增强实验，提高模型的精度
+--- Table 3 (1x1)
+Python / # 导入库 / import torch.nn.functional as F / import torch.optim as optim / import torch / import torch.nn as nn / import torch.nn.parallel / import torch.optim / import torch.utils.data / import torch.utils.data.distributed / import torchvision.transforms as transforms / import torchvision.datasets as datasets / from torch.autograd import Variable / # 设置超参数 / #每次的个数 / BATCH_SIZE = 20 / #迭代次数 / EPOCHS = 30 / #采用cpu还是gpu进行计算 / DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu') / # 数据预处理 / transform = transforms.Compose([ /     transforms.Resize([250,250]), /     # transforms.RandomVerticalFlip(), /     # transforms.RandomCrop(50), /     # transforms.RandomResizedCrop(150), /     # transforms.ColorJitter(brightness=0.5, contrast=0.5, hue=0.5), /     transforms.ToTensor(), /     transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5]) / ]) / # 读取数据（改为自己的数据路径） / dataset_train = datasets.ImageFolder(r'D:\0pythonProject\data\Pests_dataset\\train', transform) / #print(dataset_train.imgs) / # 对应文件夹的label / #print(dataset_train.class_to_idx) / dataset_test = datasets.ImageFolder(r'D:\0pythonProject\data\Pests_dataset\\val', transform) / # 对应文件夹的label / #print(dataset_test.class_to_idx) / # 导入数据 / train_loader = torch.utils.data.DataLoader(dataset_train, batch_size=BATCH_SIZE, shuffle=True) / test_loader = torch.utils.data.DataLoader(dataset_test, batch_size=BATCH_SIZE, shuffle=False)
+--- Table 4 (1x1)
+第一种，按照下面的模型结构搭建网络
+--- Table 5 (1x1)
+第二种：训练完第一个模型后，引入torchvision中的经典的CNN模型，再次重新训练
+--- Table 6 (1x1)
+Python / modellr = 1e-4 /   / # 实例化模型并且移动到GPU / model = ConvNet().to(DEVICE) / # 选择简单暴力的Adam优化器，学习率调低 / #model = torch.load(best_model.pth,weights_only=False) #加载模型参数继续训练。。。 / optimizer = optim.Adam(model.parameters(), lr=modellr) / criterion = nn.CrossEntropyLoss() / def adjust_learning_rate(optimizer, epoch): /     """Sets the learning rate to the initial LR decayed by 10 every 30 epochs""" /     modellrnew = modellr * (0.1 ** (epoch // 5)) /     # print("lr:", modellrnew) /     for param_group in optimizer.param_groups: /         param_group['lr'] = modellrnew /   /   / # 定义训练过程  / def train(model, device, train_loader, optimizer, epoch): /     model.train() /     sum_loss = 0 /     correct = 0 /     total_num = len(train_loader.dataset) /   /     for batch_idx, (data, target) in enumerate(train_loader): /         data, target = Variable(data).to(device), Variable(target).to(device) /         output = model(data) /         loss = criterion(output, target) /         optimizer.zero_grad() /         loss.backward() /         optimizer.step() /   /         # 训练集准确率计算 /         sum_loss += loss.item() /         _, pred = torch.max(output.data, 1) /         correct += torch.sum(pred == target) /   /         if (batch_idx + 1) % 50 == 0: /             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}\tAcc: {:.2f}%'.format( /                 epoch, (batch_idx + 1) * len(data), len(train_loader.dataset), /                 100. * (batch_idx + 1) / len(train_loader), loss.item(), /                 100.0 * correct / ((batch_idx + 1) * len(data)))) /   /     train_acc = 100.0 * correct / total_num /     ave_loss = sum_loss / len(train_loader) /     print('epoch:{}, Train Loss:{:.6f}, Train Acc:{:.2f}%'.format(epoch, ave_loss, train_acc)) /     return train_acc /   /   / def val(model, device, test_loader): /     model.eval() /     test_loss = 0 /     correct = 0 /     total_num = len(test_loader.dataset) /     with torch.no_grad(): /         for data, target in test_loader: /             data, target = Variable(data).to(device), Variable(target).to(device) /             output = model(data) /             loss = criterion(output, target) /             _, pred = torch.max(output.data, 1) /             correct += torch.sum(pred == target) /             test_loss += loss.item() /   /     val_acc = correct.item() / total_num /     avgloss = test_loss / len(test_loader) /     print('\nVal set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format( /         avgloss, correct, len(test_loader.dataset), 100 * val_acc)) /     return val_acc /   /   / # 训练 / if __name__ == '__main__': /     best_acc = 0.0  # 记录最佳验证准确率 /     for epoch in range(1, EPOCHS + 1): /         adjust_learning_rate(optimizer, epoch) /         train(model, DEVICE, train_loader, optimizer, epoch) /         current_acc = val(model, DEVICE, test_loader) /   /         # 只保存验证集最好的模型 /         if current_acc > best_acc: /             best_acc = current_acc /             torch.save(model, 'best_model.pth') /             print(f'✅ 已保存最优模型 | 最佳验证准确率: {best_acc:.2%}\n')
+--- Table 7 (1x1)
+注意：两个模型训练完后，要分别保存相关的模型参数名字
+--- Table 8 (1x1)
+Python / from torchvision import transforms / import torch.nn.functional as F /   / import torch / import torch.nn as nn / import torch.nn.parallel / import cv2 / #from train import ConvNet / # 将 OpenCV 图像转换为 PIL 图像以便进行相同的变换 / # 模型存储路径 / model_save_path = 'best_model.pth' /  / # 数据预处理 / transform_test = transforms.Compose([transforms.ToPILImage(), /     transforms.Resize([250,250]), /     transforms.ToTensor(), /     transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5]) / ]) / class_names = ['Apple_scab', 'Apple___Black_rot','Apple___Cedar_apple_rust','Apple___healthy',          'Grape___Black_rot','Grape___healthy','Grape___Leaf_blight']  # 这个顺序很重要，要和你自己训练时候的类名顺序一致 /  / DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu') /   / model = torch.load(model_save_path,weights_only=False) / model.eval() / model =model.to(DEVICE) / # 读取图像 / image_cv2 = cv2.imread(r'D:\0pythonProject\data\Pests_dataset\test\3.jpg') / OpenCV默认以 BGR 格式读取图像，需要转换为 RGB 格式 / image_tensor = transform_test(image_cv2) / # 增加一个维度 / image_tensor.unsqueeze_(0) / image_tensor =image_tensor.to(DEVICE) / # 模型推理 / out = model(image_tensor) / predicted_class = class_names[out.argmax()] / print(predicted_class)
+--- Table 9 (1x1)
+Python / # 使用 OpenCV 显示结果 / # 将图像转换回 BGR 格式 / image_cv2 = cv2.cvtColor(image_cv2, cv2.COLOR_RGB2BGR) / # 在图像上添加文本 / font = cv2.FONT_HERSHEY_SIMPLEX / cv2.putText(image_cv2, predicted_class, (28, 36), font, 1, (0, 0, 255), 2, cv2.LINE_AA) / # 显示图像 / cv2.imshow('Result', image_cv2) / cv2.waitKey(0)
+--- Table 10 (1x1)
+创新实验要求: / 采取至少两种方式（下面两种）进行模型优化，最终保证模型的准确率有提高。 / 可以改变网络模型，例如增加网络层，改变卷积核大小及通道数等 / 改变模型的超参数，例如训练轮次、学习率、批大小、优化器、损失函数等。 / 进行数据增强实验，例如进行数据翻转、加噪声、亮度调节等。
+--- Table 11 (1x1)
+继续优化模型，提高模型精度，并将实验过程及结果填写至实验报告中。
+--- Table 12 (1x1)
+本次项目满分5分：其中，基础实验2分，创新实验2分。 / 基础实验： / 完成forward函数的编写，能够成功运行得1分。 / 调用pytorch中经典的CNN模型，能够成功运行得1分。 / 创新实验： / 采取2种优化的方法，对模型进行优化，并且模型准确度有提升。每个优化方法1分。 / 实验报告文档格式正确，内容完整，得1分。 / 奖励机制：创新实验中验证准确率最高的5名学生，本次实验满分。

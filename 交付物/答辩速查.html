@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>答辩速查 · 农作物病虫害识别</title>
+<style>
+@page { size: A4; margin: 12mm; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  font-size: 9.3pt; line-height: 1.42; color: #14171c;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+h1 { font-size: 14pt; margin: 0 0 1.4mm; letter-spacing: .5px; }
+.thesis { font-size: 10.8pt; font-weight: 700; color: #0a6b3d; margin: 0 0 0.9mm; }
+.meta { font-size: 8.1pt; color: #666; margin: 0 0 2mm; }
+h2 {
+  font-size: 10pt; margin: 2.6mm 0 1.3mm; padding-left: 2mm;
+  border-left: 2.5px solid #1f6feb; line-height: 1.2;
+}
+table { width: 100%; border-collapse: collapse; font-size: 8.8pt; }
+th, td { border: 0.3px solid #b8bec8; padding: 0.65mm 1.1mm; vertical-align: top; }
+th { background: #f0f3f7; font-weight: 700; text-align: left; }
+td.k { font-weight: 700; white-space: nowrap; }
+.warn { color: #b3261e; font-weight: 700; }
+.ok { color: #0a6b3d; font-weight: 700; }
+.pit { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.8mm; }
+.card {
+  border: 0.4px solid #d9dee5; border-left: 2px solid #d98a2b;
+  padding: 1.1mm 1.5mm; background: #fcfcfd; break-inside: avoid;
+}
+.card b { display: block; margin-bottom: 0.5mm; color: #8a4b00; }
+.qa { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2mm 3.2mm; }
+.qa p { margin: 0 0 0.8mm; padding-left: 0; break-inside: avoid; }
+.qa b { color: #1f6feb; }
+.tl { display: flex; flex-wrap: wrap; gap: 1.2mm; }
+.tl span { border: 0.3px solid #c8ced6; padding: 0.5mm 1.1mm; background: #f8f9fb; }
+.foot { font-size: 7pt; color: #8a8f96; margin-top: 1.6mm; border-top: 0.3px solid #ddd; padding-top: 1mm; }
+</style>
+</head>
+<body>
+
+<h1>答辩速查 · 农作物病虫害识别</h1>
+<p class="thesis">立论：7 类叶片、16 组对照，SE-Res+余弦 99.16%（holdout 99.79%）。</p>
+<p class="meta">Val 836（Train 分层 20%）｜Holdout 466｜Test 1213 无标签｜从零训练，无预训练权重</p>
+
+<h2>一、四条链净贡献（1pp ≈ 8.4 张）</h2>
+<table>
+<tr><th style="width:27%">链</th><th>关键数字</th><th style="width:14%">判定</th></tr>
+<tr><td class="k">结构（对 simple 94.26）</td><td>deep +2.27｜dwsep −7.66｜residual +3.71｜SE-Res +3.59｜resnet18 +3.95</td><td class="ok">可判（19–64 张）</td></tr>
+<tr><td class="k">结构增量</td><td>residual → 只加 SE：<span class="warn">−0.12 = 1 张</span>（holdout −0.64 = 3 张）</td><td class="warn">不可判</td></tr>
+<tr><td class="k">调度</td><td>E6 → P2（StepLR 30 轮 → cosine 40 轮）：<b>+1.31</b>（best）/ <b>+1.19</b>（final），10–11 张</td><td class="ok">可判</td></tr>
+<tr><td class="k">增强</td><td>strong@30 轮 −12.44（104 张，崩）｜strong@余弦40 −0.96（8 张，仍负）｜30% 数据下 light 再 +2.27（19 张）</td><td class="ok">可判</td></tr>
+<tr><td class="k">数据</td><td>100% → 30%：−5.26（44 张）；30% 下补余弦 +1.55（13 张）；累计 +3.82（32 张）</td><td class="ok">可判</td></tr>
+</table>
+<p class="meta" style="margin:1mm 0 0">分辨率：val 1 张 = 0.12pp｜holdout 1 张 = 0.21pp｜Cedar 22 张 → 该类 1 张 = 4.55pp｜差值 ≤2 张一律标"不可判"</p>
+
+<h2>二、三个已知坑 + 标准答法</h2>
+<div class="pit">
+  <div class="card">
+    <b>坑 1｜SE 只有 −0.12pp（1 张）</b>
+    "测不出来" ≠ "没用"。836 张上 1 张就是 0.12pp，单 seed 分不清 SE 与初始化、早停点（E4 best_ep=16 / E6=10）。holdout 同向 −0.64（3 张），仍属边缘。要判负贡献需 3–5 seed 或更大评估集。措辞：<b>无可测收益。</b>
+  </div>
+  <div class="card">
+    <b>坑 2｜强增强补到余弦 40 仍 −0.96pp</b>
+    两件事分开：崩盘 −12.44 是<b>学习率预算</b>（StepLR 每 5 轮 ×0.1，30 轮时 lr≈1e-10）；同增强换余弦 40 轮回补 +11.48（96 张）。剩下 −0.96（8 张）才是"强增强略劣于无增强"，这条可判，可以说"增强没用"。
+  </div>
+  <div class="card">
+    <b>坑 3｜Grad-CAM ≠ 定位病灶</b>
+    7 错中 5 个用 Grad-CAM、2 个 CAM 能量在背景（覆盖率 0.09 / 0.00）改用遮挡敏感度。热区都在叶片上，但<b>块状弥散</b>、部分贴叶缘。只能说"决策依据来自叶片纹理/色泽"，不能说"定位到病灶"；7 错 5 个是"病→健康"，错误集中在漏诊方向。
+  </div>
+</div>
+
+<h2>三、六个最可能被问的问题（30 秒答法）</h2>
+<div class="qa">
+  <p><b>1. 只有单 seed，凭什么可信？</b>不报不可判的数。全表只有 SE 的 −0.12 落在 1 张分辨率内，已标注；其余 ≥3 张。best 与 final 的差也给了（P2 差 0.12）。</p>
+  <p><b>2. 99% 是不是任务太简单？</b>P3 验证 100% 掉到 holdout 99.36（3 错）；Cedar 仅 22 张，1 张 4.55pp；7 错 5 漏诊。且 holdout 普遍高于 val（E1 96.78 vs 94.26），val 偏难。</p>
+  <p><b>3. 为什么不用预训练 ResNet18？E2 是 100%。</b>承认它更强（验证/holdout 双 100%）。不用是实验设计约束：结构消融要求同条件从零训练；且 SE-Res 2.80M，是其 1/4，部署更省。E2 已列为上限参考；它依赖 ImageNet 预训练，换作物/新病害时优势会退化。</p>
+  <p><b>4. 创新点到底是什么？</b>唯一站得住的净收益是"调度 + 训练预算"约 +1.2pp（10–11 张）；SE 无可测收益；短预算强增强有害。一句话：预算匹配比换模块更重要。</p>
+  <p><b>5. 数据哪来的、能对外用吗？</b>课程提供的 Pests_dataset，7 类，Train 4173 / holdout 466 / test 1213（无标签）。仓库无许可证文件，仅课程用途，未商用、未再分发；对外前需确认来源许可。</p>
+  <p><b>6. 这套能落地吗？</b>能落地：2.80M 参数、224 输入、CPU 可推理。不能承诺精度：5/7 错误是漏诊，需低置信阈值 + 人工复核；test 无标签，给不出泛化保证。</p>
+</div>
+
+<h2>四、3 分钟口述提纲</h2>
+<div class="tl">
+  <span><b>0:00–0:20</b> 立论：7 类、16 组、从零训练，99.16% / holdout 99.79%</span>
+  <span><b>0:20–1:10</b> 四条链：结构 +3.6~3.9，SE 增量无可测收益；调度 +1.2；强增强短预算崩 12pp、补预算仍 −1；数据砍 30% 掉 5.26、补预算回 3.82</span>
+  <span><b>1:10–1:50</b> 错误解剖：7 错 5 漏诊；CAM 在叶片但弥散，只能证明"没看背景"</span>
+  <span><b>1:50–2:30</b> 三个坑：不可判 ≠ 没用；崩盘是学习率；CAM 边界</span>
+  <span><b>2:30–2:50</b> 边界：单 seed、Cedar 22 张、无 test 标签、未用预训练</span>
+  <span><b>2:50–3:00</b> 收尾：预算匹配 &gt; 模块堆叠，漏诊是下一步重点</span>
+</div>
+
+<p class="foot">来源：outputs/ablation_table.md｜outputs/&lt;run&gt;/summary.json｜outputs/holdout/eval_val466.csv｜outputs/analysis/errors.csv、cam_check.json</p>
+
+</body>
+</html>
