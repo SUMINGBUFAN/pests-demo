@@ -1,0 +1,25 @@
+# ===== 原始数据集（体量大、可重新获取，绝不入库；仅限根目录 data/）=====
+/data/
+
+# ===== 模型权重（所有 run 的 best/last 权重，二进制且可再生）=====
+**/*.pth
+
+# ===== Python 运行缓存 =====
+__pycache__/
+*.pyc
+
+# ===== 训练产物（outputs 下每个 run 的权重/曲线/指标/日志）=====
+# 注：outputs/static_snapshot/ 保留在磁盘；站点需要的快照副本在 site/data/，随站点入库。
+/outputs/
+
+# ===== 旧流水线产物 =====
+code/legacy/runs/
+
+# ===== 临时文件 =====
+*.tmp
+*.log
+!docs/**/*.log
+Thumbs.db
+.DS_Store
+screenshot*.png
+*_tmp.png

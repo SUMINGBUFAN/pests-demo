@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>苹果与葡萄叶片病害识别 · 预计算快照</title>
+<meta name="description" content="纯静态演示页：1679 张叶片的预计算识别结果，不连推理服务、不上传图片。">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="./assets/style.css">
+</head>
+<body>
+<a class="skip" href="#grid">跳到样本网格</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-kicker" data-text="topbar.brandKicker">病害标本档案</span>
+      <h1 class="brand-title" data-text="topbar.brandTitle">苹果与葡萄叶片识别</h1>
+    </div>
+    <div class="mode-strip" role="note">
+      <span class="mode-dot" aria-hidden="true"></span>
+      <b data-text="topbar.mode">演示模式 · 预计算快照（此页不连推理服务，不上传新图）</b>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="hero-title">
+    <p class="eyebrow" data-text="hero.eyebrow">STATIC SNAPSHOT</p>
+    <h2 class="hero-title" id="hero-title" data-text="hero.title">一片叶子的七种身份</h2>
+    <p class="hero-sub" data-text="hero.subtitle"></p>
+
+    <div class="metrics" aria-label="数据指标">
+      <div class="metric">
+        <span class="metric-label" data-text="metrics.val.label">验证集最佳准确率</span>
+        <b class="metric-value"><span id="m-val">—</span><i id="m-val-unit"></i></b>
+        <span class="metric-detail" id="m-val-detail"></span>
+      </div>
+      <div class="metric">
+        <span class="metric-label" data-text="metrics.holdout.label">留出集准确率</span>
+        <b class="metric-value"><span id="m-holdout">—</span><i id="m-holdout-unit"></i></b>
+        <span class="metric-detail" id="m-holdout-detail"></span>
+      </div>
+      <div class="metric">
+        <span class="metric-label" data-text="metrics.snapshot.label">快照样本总数</span>
+        <b class="metric-value"><span id="m-snapshot">—</span><i id="m-snapshot-unit"></i></b>
+        <span class="metric-detail" id="m-snapshot-detail"></span>
+      </div>
+    </div>
+
+    <p class="cover-note" data-text="hero.coverNote"></p>
+  </section>
+
+  <section class="classes" aria-labelledby="classes-title">
+    <div class="section-head">
+      <h3 id="classes-title" data-text="classesTitle.title">7 类索引</h3>
+      <p data-text="classesTitle.hint">点任意一类，按预测结果筛选样本</p>
+    </div>
+    <div class="chip-scroll" id="class-chips"></div>
+  </section>
+
+  <section class="toolbar" aria-label="筛选与搜索">
+    <div class="toolbar-row">
+      <label class="search">
+        <span class="search-label" data-text="filters.searchLabel">搜索文件名</span>
+        <input id="search" type="search" autocomplete="off" data-placeholder="filters.searchPlaceholder">
+      </label>
+      <div class="seg" id="source-seg" role="group" data-aria="filters.sourceLabel" aria-label="来源"></div>
+    </div>
+    <div class="toolbar-row">
+      <button class="btn toggle" id="wrong-toggle" type="button" aria-pressed="false">
+        <span class="toggle-mark" aria-hidden="true"></span>
+        <span data-text="filters.wrong">只看判错的</span>
+      </button>
+      <button class="btn ghost" id="reset" type="button" data-text="filters.reset">重置筛选</button>
+      <button class="btn brass" id="random" type="button" data-text="actions.random">随机抽 12 张</button>
+    </div>
+  </section>
+
+  <section class="results" id="results">
+    <div class="result-head">
+      <p class="count" id="count" aria-live="polite"></p>
+    </div>
+    <div class="offline-note" id="offline-note" hidden></div>
+
+    <div class="sample-panel" id="sample-panel" hidden>
+      <div class="sample-head">
+        <div>
+          <h3 data-text="results.sampleTitle">随机抽样 12 张</h3>
+          <p data-text="results.sampleHint"></p>
+        </div>
+        <div class="sample-actions">
+          <button class="btn sm" id="resample" type="button" data-text="actions.resample">重新抽 12 张</button>
+          <button class="btn ghost sm" id="close-sample" type="button" data-text="actions.closeSample">收起抽样</button>
+        </div>
+      </div>
+      <div class="grid" id="sample-grid"></div>
+    </div>
+
+    <div class="grid" id="grid" tabindex="-1"></div>
+    <p class="empty" id="empty" hidden data-text="results.empty">没有符合条件的样本。</p>
+    <div class="sentinel" id="sentinel">
+      <button class="btn ghost" id="more" type="button" data-text="results.more">继续加载</button>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <section class="boundary">
+    <h3 data-text="footer.boundaryTitle">适用边界</h3>
+    <ul id="boundary-list"></ul>
+  </section>
+  <p class="disclaimer" data-text="footer.disclaimer"></p>
+  <p class="foot-note" data-text="footer.note"></p>
+  <p class="credit" data-text="footer.credit"></p>
+</footer>
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+  <div class="sheet-card" role="document">
+    <button class="sheet-close" id="sheet-close" type="button" aria-label="关闭">×</button>
+    <div class="sheet-media">
+      <img id="sheet-img" alt="" width="256" height="256">
+    </div>
+    <div class="sheet-body">
+      <h3 class="sheet-title" id="sheet-title"></h3>
+      <p class="sheet-file" id="sheet-file"></p>
+      <div class="chips" id="sheet-meta"></div>
+      <p class="truth-line" id="sheet-truth"></p>
+      <h4 class="probs-title" data-text="detail.probs">7 类概率（降序）</h4>
+      <div class="probs" id="sheet-probs"></div>
+      <div class="top3" id="sheet-top3"></div>
+    </div>
+  </div>
+</div>
+
+<script src="./assets/app.js"></script>
+</body>
+</html>

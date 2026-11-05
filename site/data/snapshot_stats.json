@@ -1,0 +1,57 @@
+{
+  "test": {
+    "n": 1213,
+    "pred_distribution": {
+      "Apple___Apple_scab": 123,
+      "Apple___Black_rot": 131,
+      "Apple___Cedar_apple_rust": 55,
+      "Apple___healthy": 332,
+      "Grape___Black_rot": 242,
+      "Grape___healthy": 90,
+      "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": 240
+    },
+    "confidence_bins": {
+      "lt70": 7,
+      "70to90": 19,
+      "gt90": 1187
+    },
+    "mean_confidence_by_pred": {
+      "Apple___Apple_scab": 0.9757,
+      "Apple___Black_rot": 0.9864,
+      "Apple___Cedar_apple_rust": 0.9849,
+      "Apple___healthy": 0.9916,
+      "Grape___Black_rot": 0.9944,
+      "Grape___healthy": 0.9972,
+      "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": 0.996
+    }
+  },
+  "holdout": {
+    "n": 466,
+    "pred_distribution": {
+      "Apple___Apple_scab": 49,
+      "Apple___Black_rot": 51,
+      "Apple___Cedar_apple_rust": 22,
+      "Apple___healthy": 132,
+      "Grape___Black_rot": 94,
+      "Grape___healthy": 34,
+      "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": 84
+    },
+    "confidence_bins": {
+      "lt70": 6,
+      "70to90": 7,
+      "gt90": 453
+    },
+    "mean_confidence_by_pred": {
+      "Apple___Apple_scab": 0.9649,
+      "Apple___Black_rot": 0.9794,
+      "Apple___Cedar_apple_rust": 0.9916,
+      "Apple___healthy": 0.9928,
+      "Grape___Black_rot": 0.9939,
+      "Grape___healthy": 0.998,
+      "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": 0.999
+    },
+    "consistent": 465,
+    "inconsistent": 1,
+    "acc_pct": 99.79
+  }
+}

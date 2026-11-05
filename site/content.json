@@ -1,0 +1,146 @@
+{
+  "meta": {
+    "title": "苹果与葡萄叶片病害识别 · 预计算快照",
+    "description": "纯静态演示页：1679 张 test 与 holdout 叶片的预计算识别结果，不联网、不上传图片。"
+  },
+  "topbar": {
+    "brandKicker": "病害标本档案 · HERBARIUM",
+    "brandTitle": "苹果与葡萄叶片识别",
+    "mode": "演示模式 · 预计算快照（此页不连推理服务，不上传新图）"
+  },
+  "hero": {
+    "eyebrow": "STATIC SNAPSHOT / 2026-11-04",
+    "title": "一片叶子的七种身份",
+    "subtitle": "把 test 集与 holdout 集的 1679 张叶片缩略图摊开，按预测类别、来源与文件名逐一查验。",
+    "coverNote": "这里没有实时推理：每张图的类别与概率都是提前算好的。它适合展示模型在固定数据上的表现，不适合当成现场诊断工具。"
+  },
+  "metrics": {
+    "val": {
+      "label": "验证集最佳准确率",
+      "value": "99.16",
+      "unit": "%",
+      "detail": "836 张 · 训练第 30 轮"
+    },
+    "holdout": {
+      "label": "留出集准确率",
+      "value": "99.79",
+      "unit": "%",
+      "detailTpl": "{n} 张 · {wrong} 张判错"
+    },
+    "snapshot": {
+      "label": "快照样本总数",
+      "value": "1679",
+      "unit": "张",
+      "detailTpl": "test {test} + holdout {holdout}"
+    }
+  },
+  "classesTitle": {
+    "title": "7 类索引",
+    "hint": "点任意一类，按预测结果筛选样本"
+  },
+  "filters": {
+    "sourceLabel": "来源",
+    "sourceAll": "全部",
+    "sourceTest": "test",
+    "sourceHoldout": "holdout",
+    "classAll": "全部 7 类",
+    "wrong": "只看判错的",
+    "searchLabel": "搜索文件名",
+    "searchPlaceholder": "输入文件名，如 0 (239).JPG",
+    "reset": "重置筛选"
+  },
+  "actions": {
+    "random": "随机抽 12 张",
+    "resample": "重新抽 12 张",
+    "closeSample": "收起抽样",
+    "close": "关闭",
+    "detail": "查看详情"
+  },
+  "results": {
+    "countTpl": "当前 {shown} 张 / 共 {total} 张",
+    "sampleTitle": "随机抽样 12 张",
+    "sampleHint": "每次从全部样本里随机取 12 张，模拟原页面的抽样演示；点卡片仍可看详情。",
+    "empty": "没有符合条件的样本，试试「重置筛选」。",
+    "more": "继续加载"
+  },
+  "detail": {
+    "title": "样本详情",
+    "source": "来源",
+    "file": "文件名",
+    "conf": "模型置信度",
+    "pred": "预测",
+    "truth": "真值",
+    "truthTest": "真值：未提供（test 集没有标注）",
+    "agree": "✓ 一致",
+    "disagree": "✕ 不一致",
+    "probs": "7 类概率（降序）",
+    "top3": "Top-3",
+    "close": "关闭"
+  },
+  "card": {
+    "conf": "置信度",
+    "wrong": "判错",
+    "view": "查看详情"
+  },
+  "offline": {
+    "dataNote": "当前以 file:// 直接打开：浏览器拦截了本地 JSON 读取，已切换为内置的 30 张样例与内置文案。要看完整 1679 张，请用本地服务器打开 site/。",
+    "contentNote": "未能读取 content.json，页面使用内置默认文案。"
+  },
+  "footer": {
+    "boundaryTitle": "适用边界",
+    "boundary": [
+      "本页只展示 test 与 holdout 的预计算推理结果，不接收上传图片，也不连接推理服务。",
+      "test 集未提供真值标注，页面不会给出对错判断；holdout 的 466 张含标注，可用于核对。",
+      "7 类覆盖苹果与葡萄叶片，其他作物、其他病害或非叶片图片不在适用范围内。",
+      "准确率来自固定测试集，不能等同于田间诊断准确率；结果不构成植保建议。",
+      "缩略图为 256×256 JPEG，仅用于浏览，不能据此复核原始分辨率细节。"
+    ],
+    "disclaimer": "免责声明：本页是课程项目的离线演示快照，不提供实时诊断、不承担生产决策依据。",
+    "note": "数据：本项目 test 集 1213 张 + holdout 集 466 张；快照生成于 2026-11-04，模型更新后不会自动重算。",
+    "credit": "模型 se_residual · 输入 224×224 · 参数量 2.799M"
+  },
+  "classes": [
+    {
+      "key": "Apple___Apple_scab",
+      "cn": "苹果黑星病",
+      "latin": "Venturia inaequalis",
+      "host": "苹果"
+    },
+    {
+      "key": "Apple___Black_rot",
+      "cn": "苹果黑腐病",
+      "latin": "Botryosphaeria obtusa",
+      "host": "苹果"
+    },
+    {
+      "key": "Apple___Cedar_apple_rust",
+      "cn": "苹果雪松锈病",
+      "latin": "Gymnosporangium juniperi-virginianae",
+      "host": "苹果"
+    },
+    {
+      "key": "Apple___healthy",
+      "cn": "苹果健康",
+      "latin": "Malus domestica（健康叶片）",
+      "host": "苹果"
+    },
+    {
+      "key": "Grape___Black_rot",
+      "cn": "葡萄黑腐病",
+      "latin": "Guignardia bidwellii",
+      "host": "葡萄"
+    },
+    {
+      "key": "Grape___healthy",
+      "cn": "葡萄健康",
+      "latin": "Vitis vinifera（健康叶片）",
+      "host": "葡萄"
+    },
+    {
+      "key": "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+      "cn": "葡萄褐斑病",
+      "latin": "Pseudocercospora vitis",
+      "host": "葡萄"
+    }
+  ]
+}
